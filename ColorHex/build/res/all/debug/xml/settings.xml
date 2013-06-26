@@ -1,0 +1,19 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_cat_main">
+        <CheckBoxPreference
+                android:title="@string/pref_title_alpha"
+                android:defaultValue="false"
+                android:key="pref_alpha"/>
+        <ListPreference
+            android:title="@string/pref_title_clipboard"
+            android:defaultValue="0"
+            android:key="pref_clipboard"
+            android:entries="@array/pref_clipboard_items"
+            android:entryValues="@array/pref_clipboard_items_values"/>
+
+        <Preferene
+                android:title="@string/pref_title_delete_db"
+                android:key="pref_delete_db"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

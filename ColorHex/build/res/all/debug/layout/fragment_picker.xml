@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:color="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/background"
+              android:layout_margin="8dp"
+              android:orientation="vertical"
+              tools:context=".Main">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:id="@+id/tvOutputHex"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:textSize="28sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"/>
+
+        <CheckBox
+                android:id="@+id/star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StarAppTheme"
+                android:layout_gravity="right|center_vertical"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
+                />
+    </RelativeLayout>
+
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvOutputDec"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-light"
+            android:textSize="28sp"
+            android:textColor="@android:color/darker_gray"/>
+
+    <com.jonas.colorhex.color.ColorPicker
+            android:id="@+id/picker"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            color:color_wheel_radius="110dp"
+            color:color_center_radius="50dp"
+            color:color_center_halo_radius="56dp"
+            />
+
+    <com.jonas.colorhex.color.SVBar
+            android:id="@+id/svbar"
+            android:layout_width="322dp"
+            android:layout_height="112dp"
+            android:layout_gravity="center"
+            android:layout_margin="8dip"/>
+
+    <com.jonas.colorhex.color.OpacityBar
+            android:id="@+id/opacitybar"
+            android:visibility="gone"
+            android:layout_width="322dp"
+            android:layout_height="112dp"
+            android:layout_gravity="center"
+            android:layout_margin="8dip"/>
+
+
+</LinearLayout>

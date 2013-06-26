@@ -1,0 +1,19 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/actionbar_done"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight="1" >
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_action_done"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:paddingRight="20dp"
+            android:layout_marginLeft="8dp"
+            android:text="@string/action_done"
+            android:textColor="@color/ab_grey" />
+
+</FrameLayout>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_clipboard_items">
+        <item>Hexadecimal</item>
+        <item>Hexadecimal mit Alpha</item>
+        <item>Decimal</item>
+        <item>Decimal mit Alpha</item>
+    </string-array>
+    <string-array name="pref_clipboard_items_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <color name="ab_grey">#FFD1D1D1</color>
+    <color name="ab_red">#FFC74B46</color>
+    <color name="transparent">#00000000</color>
+
+    <declare-styleable name="ColorBars">
+        <attr name="bar_thickness" format="dimension" />
+        <attr name="bar_length" format="dimension" />
+        <attr name="bar_pointer_radius" format="dimension" />
+        <attr name="bar_pointer_halo_radius" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="ColorPicker">
+        <attr name="color_wheel_radius" format="dimension" />
+        <attr name="color_wheel_thickness" format="dimension" />
+        <attr name="color_center_radius" format="dimension" />
+        <attr name="color_center_halo_radius" format="dimension" />
+        <attr name="color_pointer_radius" format="dimension" />
+        <attr name="color_pointer_halo_radius" format="dimension" />
+    </declare-styleable>
+
+    <dimen name="bar_length">240dp</dimen>
+    <dimen name="bar_pointer_halo_radius">14dp</dimen>
+    <dimen name="bar_pointer_radius">6dp</dimen>
+    <dimen name="bar_thickness">4dp</dimen>
+    <dimen name="color_center_halo_radius">60dp</dimen>
+    <dimen name="color_center_radius">54dp</dimen>
+    <dimen name="color_pointer_halo_radius">18dp</dimen>
+    <dimen name="color_pointer_radius">14dp</dimen>
+    <dimen name="color_wheel_radius">124dp</dimen>
+    <dimen name="color_wheel_thickness">8dp</dimen>
+
+    <integer name="card_flip_time_full">400</integer>
+    <integer name="card_flip_time_half">200</integer>
+
+    <string name="action_delete">Löschen</string>
+    <string name="action_done">Fertig</string>
+    <string name="action_favorite">Favoriten</string>
+    <string name="action_flip">Flip</string>
+    <string name="action_license">Lizenz</string>
+    <string name="action_select_all">Alles auswählen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_share">Teilen</string>
+    <string name="app_name">ColorHex</string>
+    <string name="clipboard">In Zwischenablage kopiert</string>
+    <string name="contextual_menu">\u0020ausgewählt</string>
+    <string name="license">\u0020\u0020Copyright 2012 Lars Werkman\nLicensed under the Apache License, Version
+        2.0 (the "License"); you may not use this file except in compliance with the License. You
+        may obtain a copy of the License at
+        \n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\n
+        Unless required by applicable law or agreed to in writing, software distributed under the
+        License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied. See the License for the specific language governing permissions
+        and limitations under the License.</string>
+    <string name="list_header_favorite">@string/action_favorite</string>
+    <string name="list_header_recent">Kürzlich verwendet</string>
+    <string name="pref_cat_main">Allgemein</string>
+    <string name="pref_title_alpha">Alpha-Kanal anzeigen</string>
+    <string name="pref_title_clipboard">Zwischenablage</string>
+    <string name="pref_title_delete_db">Alle Favoriten löschen</string>
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
+        <item name="android:editTextStyle">@style/EditTextAppTheme</item>
+        <item name="android:actionBarStyle">@style/AppTheme.ActionBarStyle</item>
+        <item name="android:checkboxStyle">@style/CheckBoxAppTheme</item>
+        <item name="android:radioButtonStyle">@style/RadioButtonAppTheme</item>
+        <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
+        <item name="android:buttonStyleToggle">@style/ToggleAppTheme</item>
+        <item name="android:listViewStyle">@style/ListViewAppTheme</item>
+        <item name="android:listViewWhiteStyle">@style/ListViewAppTheme.White</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItemAppTheme</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerAppTheme</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+        <item name="android:actionBarItemBackground">@drawable/background_tabs</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/ab_grey</item>
+    </style>
+
+    <style name="AppTheme.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/ab_red</item>
+        <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
+        <item name="android:actionOverflowButtonStyle">            @android:style/Widget.Holo.ActionButton.Overflow</item>
+    </style>
+
+    <style name="CheckBoxAppTheme" parent="android:Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/btn_check_holo_light</item>
+    </style>
+
+    <style name="EditTextAppTheme" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/edit_text_holo_light</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="ListViewAppTheme" parent="android:Widget.ListView">
+        <item name="android:listSelector">@drawable/list_selector_holo_light</item>
+    </style>
+
+    <style name="ListViewAppTheme.White" parent="android:Widget.ListView.White">
+        <item name="android:listSelector">@drawable/list_selector_holo_light</item>
+    </style>
+
+    <style name="RadioButtonAppTheme" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/btn_radio_holo_light</item>
+    </style>
+
+    <style name="SpinnerAppTheme" parent="android:Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_holo_light</item>
+        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+    </style>
+
+    <style name="SpinnerAppTheme.DropDown">
+        <item name="android:spinnerMode">dropdown</item>
+    </style>
+
+    <style name="SpinnerDropDownItemAppTheme" parent="android:Widget.DropDownItem.Spinner">
+        <item name="android:checkMark">@drawable/btn_radio_holo_light</item>
+    </style>
+
+    <style name="SpinnerItemAppTheme" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="StarAppTheme" parent="android:Widget.Holo.CompoundButton.Star">
+        <item name="android:button">@drawable/btn_star</item>
+    </style>
+
+    <style name="ToggleAppTheme" parent="android:Widget.Holo.Light.Button.Toggle">
+        <item name="android:background">@drawable/btn_toggle_holo_light</item>
+    </style>
+
+</resources>

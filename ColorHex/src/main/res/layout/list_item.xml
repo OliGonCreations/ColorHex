@@ -1,0 +1,24 @@
+<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/item_color"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="16dp"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/tvItem"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/item_color"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginLeft="16dp"
+            android:textSize="26sp"/>
+</RelativeLayout>

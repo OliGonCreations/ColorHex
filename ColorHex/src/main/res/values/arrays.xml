@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_clipboard_items">
+        <item>Hexadecimal</item>
+        <item>Hexadecimal mit Alpha</item>
+        <item>Decimal</item>
+        <item>Decimal mit Alpha</item>
+    </string-array>
+    <string-array name="pref_clipboard_items_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+</resources>
