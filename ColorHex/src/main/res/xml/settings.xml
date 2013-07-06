@@ -11,7 +11,7 @@
             android:entries="@array/pref_clipboard_items"
             android:entryValues="@array/pref_clipboard_items_values"/>
 
-        <Preferene
+        <Preference
                 android:title="@string/pref_title_delete_db"
                 android:key="pref_delete_db"
             />
