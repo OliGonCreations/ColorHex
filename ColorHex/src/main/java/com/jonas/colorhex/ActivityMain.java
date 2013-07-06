@@ -110,6 +110,11 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (item.getItemId() == R.id.action_favorite) {
             getFragmentManager().beginTransaction().replace(R.id.container, new FavoriteFragment()).addToBackStack(null).commit();
+        } else if (item.getItemId() == android.R.id.home && findViewById(R.id.lvSticky) != null) {
+            FragmentManager fm = getFragmentManager();
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+            }
         }
         return super.onOptionsItemSelected(item);
 
@@ -173,6 +178,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
             ViewGroup rootView = (ViewGroup) inflater
                     .inflate(R.layout.fragment_favorite, container, false);
 
@@ -211,7 +217,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    switch(item.getItemId()){
+                    switch (item.getItemId()) {
                         case R.id.con_action_delete:
                             Toast.makeText(getActivity(), "WIP", Toast.LENGTH_SHORT).show();
                             mode.finish();
@@ -263,7 +269,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         @Override
         public void onPause() {
             super.onPause();
-            Toast.makeText(getActivity(), "Paused", Toast.LENGTH_SHORT).show();
             editModeSelected(false);
         }
 
@@ -652,7 +657,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
         @Override
         public long getHeaderId(int position) {
-            if (position > colorsFav.size())
+            if (position >= colorsFav.size())
                 return 2L;
             else return 1L;
         }
