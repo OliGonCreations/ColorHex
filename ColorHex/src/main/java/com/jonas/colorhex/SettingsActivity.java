@@ -64,7 +64,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         @Override
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-            if(preference.getKey() == pref_delete_db) {
+            if(preference.getKey().equals(pref_delete_db)) {
                 new DatabaseHandler(getActivity()).deleteFavorites();
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference);

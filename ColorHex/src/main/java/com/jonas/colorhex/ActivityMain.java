@@ -88,7 +88,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         findViewById(R.id.container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
             }
         });
 
