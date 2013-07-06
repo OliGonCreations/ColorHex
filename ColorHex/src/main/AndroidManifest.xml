@@ -29,7 +29,6 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.jonas.colorhex.ActivityMain"/>
         </activity>
-        <activity android:name=".DatabaseHandler"/>
     </application>
 
 </manifest>
