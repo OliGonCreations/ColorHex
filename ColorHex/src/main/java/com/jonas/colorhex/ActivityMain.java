@@ -112,6 +112,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             getFragmentManager().beginTransaction().replace(R.id.container, new FavoriteFragment()).addToBackStack(null).commit();
         }
         return super.onOptionsItemSelected(item);
+
     }
 
     @Override
