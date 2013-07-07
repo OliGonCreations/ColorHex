@@ -129,4 +129,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(NAME_FAVORITE, null, null);
         db.close();
     }
+
+    public void deleteRecents() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(NAME_RECENT, null, null);
+        db.close();
+    }
 }

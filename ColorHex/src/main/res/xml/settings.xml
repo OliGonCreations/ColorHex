@@ -12,8 +12,12 @@
             android:entryValues="@array/pref_clipboard_items_values"/>
 
         <Preference
-                android:title="@string/pref_title_delete_db"
-                android:key="pref_delete_db"
-            />
+                android:title="@string/pref_title_delete_db_fav"
+                android:key="pref_delete_db_fav"
+                />
+        <Preference
+                android:title="@string/pref_title_delete_db_rec"
+                android:key="pref_delete_db_rec"
+                />
     </PreferenceCategory>
 </PreferenceScreen>

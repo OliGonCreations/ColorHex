@@ -1,7 +1,33 @@
-<com.jonas.colorhex.stickylistview.StickyListHeadersListView
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/lvSticky"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:background="@drawable/background"
-        android:layout_margin="8dp"/>
+        android:layout_margin="8dp">
+
+    <com.jonas.colorhex.stickylistview.StickyListHeadersListView
+            android:id="@+id/lvSticky"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/view"/>
+
+    <Button
+            android:id="@+id/btn_filter"
+            android:layout_height="48dp"
+            android:layout_width="match_parent"
+            android:text="@string/btn_filter_color"
+
+            android:background="@drawable/background_button"
+            android:layout_alignParentBottom="true"/>
+
+    <View
+            android:layout_above="@+id/btn_filter"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/dividerVertical"
+            android:id="@+id/view"/>
+
+
+</RelativeLayout>

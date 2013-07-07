@@ -10,7 +10,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
-            android:textColor="@color/ab_grey"
+            android:textColor="@color/ab_red"
             android:textSize="16sp"
             android:textStyle="bold"/>
 

@@ -235,22 +235,13 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
             mStickyListView = (StickyListHeadersListView) rootView.findViewById(R.id.lvSticky);
             final CustomListViewAdapter adapter = new CustomListViewAdapter(getActivity(), db.getAllFavColors(), db.getAllRecColors(), new String[]{res.getString(R.string.list_header_favorite), res.getString(R.string.list_header_recent)}, db.getAllFavValues(1), db.getAllRecValues(1));
-            mStickyListView.setAdapter(adapter);
+            if (adapter.isEmpty()) {
+                Toast.makeText(getActivity(), "Keine Einträge", Toast.LENGTH_SHORT).show();
+            } else {
+
+                mStickyListView.setAdapter(adapter);
             mStickyListView.setOnItemClickListener(this);
-            /*SwipeDismissListViewTouchListener touchListener =
-                    new SwipeDismissListViewTouchListener(
-                            mStickyListView,
-                            new SwipeDismissListViewTouchListener.OnDismissCallback() {
-                                @Override
-                                public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                    for (int position : reverseSortedPositions) {
-                                        adapter.remove(position);
-                                    }
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
-            mStickyListView.setOnTouchListener(touchListener);
-            mStickyListView.setOnScrollListener(touchListener.makeScrollListener());*/
+            }
             return rootView;
         }
 
@@ -581,6 +572,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         private List<String> codeFav, codeRec;
         private List<Integer> colorsRec, colorsFav;
         private String[] headers;
+        private boolean empty = false;
 
         public CustomListViewAdapter(Context context, List<Integer> colorsFav, List<Integer> colorsRec, String[] headers, List<String> codeFav, List<String> codeRec) {
             inflater = LayoutInflater.from(context);
@@ -589,6 +581,12 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             this.headers = headers;
             this.codeFav = codeFav;
             this.codeRec = codeRec;
+            if (colorsFav.size() == 0 && colorsRec.size() == 0)
+                empty = true;
+        }
+
+        public boolean isEmpty() {
+            return empty;
         }
 
         @Override
@@ -661,20 +659,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                 return 2L;
             else return 1L;
         }
-
-        /*public void remove(int position) {
-            int index;
-            if (colorsFav == null)
-                index = 0;
-            else index = colorsFav.size();
-            if (position >= index) {
-                colorsRec.remove(position - index);
-                codeRec.remove(position - index);
-            } else {
-                colorsFav.remove(position);
-                codeFav.remove(position);
-            }
-        }*/
 
         class HeaderViewHolder {
             TextView text1;

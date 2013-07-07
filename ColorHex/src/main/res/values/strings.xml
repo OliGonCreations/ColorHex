@@ -25,7 +25,10 @@
     <string name="pref_cat_main">Allgemein</string>
     <string name="pref_title_alpha">Alpha-Kanal anzeigen</string>
     <string name="pref_title_clipboard">Zwischenablage</string>
-    <string name="pref_title_delete_db">Alle Favoriten löschen</string>
+    <string name="pref_title_delete_db_fav">Alle Favoriten löschen</string>
+    <string name="pref_title_delete_db_rec">Alle kürzlich verwendeten löschen</string>
     <string name="contextual_menu">\u0020ausgewählt</string>
+    <string name="btn_filter_color">Nach Farbe sortieren</string>
+    <string name="btn_filter_date">Nach Datum sortieren</string>
 
 </resources>

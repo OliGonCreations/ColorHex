@@ -16,7 +16,8 @@ import android.view.MenuItem;
 public class SettingsActivity extends PreferenceActivity {
 
     public final static String pref_clipboard = "pref_clipboard";
-    public final static String pref_delete_db = "pref_delete_db";
+    public final static String pref_delete_db_fav = "pref_delete_db_fav";
+    public final static String pref_delete_db_rec = "pref_delete_db_rec";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +65,10 @@ public class SettingsActivity extends PreferenceActivity {
 
         @Override
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-            if(preference.getKey().equals(pref_delete_db)) {
+            if (preference.getKey().equals(pref_delete_db_fav)) {
                 new DatabaseHandler(getActivity()).deleteFavorites();
+            } else if (preference.getKey().equals(pref_delete_db_rec)) {
+                new DatabaseHandler(getActivity()).deleteRecents();
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }
