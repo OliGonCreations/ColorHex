@@ -2,15 +2,15 @@
 <resources>
 
     <string name="app_name">ColorHex</string>
-    <string name="clipboard">In Zwischenablage kopiert</string>
-    <string name="action_delete">Löschen</string>
-    <string name="action_share">Teilen</string>
-    <string name="action_select_all">Alles auswählen</string>
-    <string name="action_done">Fertig</string>
+    <string name="clipboard">Copied to clipboard.</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
+    <string name="action_select_all">Select all</string>
+    <string name="action_done">Done</string>
     <string name="action_flip">Flip</string>
-    <string name="action_favorite">Favoriten</string>
-    <string name="action_settings">Einstellungen</string>
-    <string name="action_license">Lizenz</string>
+    <string name="action_favorite">Favorites</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_license">License</string>
     <string name="license">\u0020\u0020Copyright 2012 Lars Werkman\nLicensed under the Apache License, Version
         2.0 (the "License"); you may not use this file except in compliance with the License. You
         may obtain a copy of the License at
@@ -21,15 +21,18 @@
         and limitations under the License.
     </string>
     <string name="list_header_favorite">@string/action_favorite</string>
-    <string name="list_header_recent">Kürzlich verwendet</string>
-    <string name="pref_cat_main">Allgemein</string>
-    <string name="pref_title_alpha">Alpha-Kanal anzeigen</string>
-    <string name="pref_title_clipboard">Zwischenablage</string>
-    <string name="pref_title_delete_db_fav">Alle Favoriten löschen</string>
-    <string name="pref_title_delete_db_rec">Alle kürzlich verwendeten löschen</string>
-    <string name="contextual_menu">\u0020ausgewählt</string>
-    <string name="btn_filter_color">Nach Farbe sortieren</string>
-    <string name="btn_filter_date">Nach Datum sortieren</string>
-    <string name="no_entries">Keine Einträge</string>
+    <string name="list_header_recent">Recent</string>
+    <string name="pref_cat_main">Main</string>
+    <string name="pref_title_alpha">Show alpha vchannel</string>
+    <string name="pref_title_clipboard">Clipboard</string>
+    <string name="pref_title_delete_db_fav">Delete all favorites</string>
+    <string name="pref_title_delete_db_rec">Delete all recent used</string>
+    <string name="contextual_menu">\u0020selected</string>
+    <string name="btn_filter_color">Sort by color</string>
+    <string name="btn_filter_date">Sort by date</string>
+    <string name="no_entries">No entries</string>
+    <string name="dialog_action_delete">Delete</string>
+    <string name="dialog_delete_fav">Delete all favorites?</string>
+    <string name="dialog_delete_rec">Delete all recent used?</string>
 
 </resources>

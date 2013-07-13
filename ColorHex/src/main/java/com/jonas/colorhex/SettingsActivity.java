@@ -1,5 +1,7 @@
 package com.jonas.colorhex;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -66,9 +68,23 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
             if (preference.getKey().equals(pref_delete_db_fav)) {
-                new DatabaseHandler(getActivity()).deleteFavorites();
+                new AlertDialog.Builder(getActivity())
+                        .setMessage(getString(R.string.dialog_delete_fav))
+                        .setPositiveButton(getString(R.string.dialog_action_delete), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                new DatabaseHandler(getActivity()).deleteFavorites();
+                            }
+                        }).setNegativeButton(getString(android.R.string.cancel), null).show();
             } else if (preference.getKey().equals(pref_delete_db_rec)) {
-                new DatabaseHandler(getActivity()).deleteRecents();
+                new AlertDialog.Builder(getActivity())
+                        .setMessage(getString(R.string.dialog_delete_rec))
+                        .setPositiveButton(getString(R.string.dialog_action_delete), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                new DatabaseHandler(getActivity()).deleteRecents();
+                            }
+                        }).setNegativeButton(getString(android.R.string.cancel), null).show();
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }

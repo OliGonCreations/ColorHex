@@ -71,10 +71,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<Integer> getAllFavColors() {
+    public List<Integer> getAllFavColors(boolean sort) {
         SQLiteDatabase db = this.getReadableDatabase();
         List<Integer> colors = new ArrayList<Integer>();
         String query = "SELECT * FROM " + NAME_FAVORITE;
+        if (sort)
+            query = "SELECT * FROM " + NAME_FAVORITE + " ORDER BY " + KEY_HSV;
+
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
@@ -84,10 +87,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return colors;
     }
 
-    public List<Integer> getAllRecColors() {
+    public List<Integer> getAllRecColors(boolean sort) {
         SQLiteDatabase db = this.getReadableDatabase();
         List<Integer> colors = new ArrayList<Integer>();
         String query = "SELECT * FROM " + NAME_RECENT;
+        if (sort)
+            query = "SELECT * FROM " + NAME_RECENT + " ORDER BY " + KEY_HSV;
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
@@ -97,10 +102,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return colors;
     }
 
-    public List<String> getAllFavValues(int type) {
+    public List<String> getAllFavValues(int type, boolean sort) {
         SQLiteDatabase db = this.getReadableDatabase();
         List<String> values = new ArrayList<String>();
         String query = "SELECT * FROM " + NAME_FAVORITE;
+        if (sort)
+            query = "SELECT * FROM " + NAME_FAVORITE + " ORDER BY " + KEY_HSV;
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
@@ -110,10 +117,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return values;
     }
 
-    public List<String> getAllRecValues(int type) {
+    public List<String> getAllRecValues(int type, boolean sort) {
         SQLiteDatabase db = this.getReadableDatabase();
         List<String> values = new ArrayList<String>();
         String query = "SELECT * FROM " + NAME_RECENT;
+        if (sort)
+            query = "SELECT * FROM " + NAME_RECENT + " ORDER BY " + KEY_HSV;
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
