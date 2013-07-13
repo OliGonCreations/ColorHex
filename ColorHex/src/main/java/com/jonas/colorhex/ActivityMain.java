@@ -170,7 +170,11 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         ActionMode mMode;
         private StickyListHeadersListView mStickyListView;
         private int mSelected = 0;
-        View customActionBarView;
+        private View customActionBarView, mDividerView;
+        private Button mFilter;
+        private TextView mEmptyView;
+        private CustomListViewAdapter adapter;
+        private boolean mIsSorted = false;
 
         public FavoriteFragment() {
         }
@@ -195,8 +199,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                     });
 
             mCallback = new ActionMode.Callback() {
-
-
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                     mode.setTitle(mSelected + res.getString(R.string.contextual_menu));
@@ -234,17 +236,39 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             };
 
             mStickyListView = (StickyListHeadersListView) rootView.findViewById(R.id.lvSticky);
-            final CustomListViewAdapter adapter = new CustomListViewAdapter(getActivity(), db.getAllFavColors(), db.getAllRecColors(), new String[]{res.getString(R.string.list_header_favorite), res.getString(R.string.list_header_recent)}, db.getAllFavValues(1), db.getAllRecValues(1));
-            if (adapter.isEmpty()) {
-                Toast.makeText(getActivity(), "Keine Einträge", Toast.LENGTH_SHORT).show();
-            } else {
-
-                mStickyListView.setAdapter(adapter);
-            mStickyListView.setOnItemClickListener(this);
-            }
+            mFilter = (Button) rootView.findViewById(R.id.btn_filter);
+            mDividerView = rootView.findViewById(R.id.view);
+            mEmptyView = (TextView) rootView.findViewById(R.id.tvEmpty);
+            mFilter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sortList();
+                }
+            });
+            sortList();
             return rootView;
         }
 
+        private void sortList() {
+            mIsSorted = !mIsSorted;
+            if (mIsSorted)
+                mFilter.setText(getString(R.string.btn_filter_date));
+            else
+                mFilter.setText(getString(R.string.btn_filter_color));
+            int index = mStickyListView.getFirstVisiblePosition();
+            View v = mStickyListView.getChildAt(0);
+            int top = (v == null) ? 0 : v.getTop();
+            adapter = new CustomListViewAdapter(getActivity(), db.getAllFavColors(mIsSorted), db.getAllRecColors(mIsSorted), new String[]{res.getString(R.string.list_header_favorite), res.getString(R.string.list_header_recent)}, db.getAllFavValues(1, mIsSorted), db.getAllRecValues(1, mIsSorted));
+            if (adapter.isEmpty()) {
+                mFilter.setVisibility(View.GONE);
+                mDividerView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
+            } else {
+                mStickyListView.setAdapter(adapter);
+                mStickyListView.setSelectionFromTop(index, top);
+                mStickyListView.setOnItemClickListener(this);
+            }
+        }
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -291,6 +315,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         private static String hexValue;
         private static int opacityValue;
         private boolean alphaShown;
+        private static float[] mHSV = new float[3];
 
         public CardFrontFragment() {
         }
@@ -353,6 +378,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         }
 
         public static void onCenterPressed() {
+            hexValue = String.format("#%06X", (0xFFFFFF & colorPicker.getColor()));
             String text = "";
             switch (Integer.parseInt(sp.getString(SettingsActivity.pref_clipboard, "0"))) {
                 case 0:
@@ -371,9 +397,9 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             }
             ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
             clipboard.setPrimaryClip(clip);
-            float[] mHSV = new float[3];
             Color.colorToHSV(colorPicker.getColor(), mHSV);
-            String mString = String.valueOf(mHSV[0]) + String.valueOf(mHSV[1]) + String.valueOf(mHSV[2]);
+            String format = "%1$03d";
+            String mString = String.format(format, (int) mHSV[0]) + String.format(format, (int) mHSV[1]) + String.format(format, (int) mHSV[2]);
             Toast.makeText(ctx, res.getString(R.string.clipboard), Toast.LENGTH_SHORT).show();
             db.addRecent(colorPicker.getColor(), mString, hexValue, "A:" + Integer.toHexString(opacityValue).toUpperCase() + " " + hexValue, "(" + Integer.parseInt("" + hexValue.charAt(1) + hexValue.charAt(2), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt("" + hexValue.charAt(5) + hexValue.charAt(6), 16) + ")", "A:" + opacityValue + " (" + Integer.parseInt(String.valueOf(hexValue.charAt(1) + hexValue.charAt(2)), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt(String.valueOf(hexValue.charAt(5) + hexValue.charAt(6)), 16) + ")");
         }
@@ -382,9 +408,10 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (compoundButton.getId() == R.id.star) {
                 if (b) {
-                    float[] mHSV = new float[3];
                     Color.colorToHSV(colorPicker.getColor(), mHSV);
-                    String mString = String.valueOf(mHSV[0]) + String.valueOf(mHSV[1]) + String.valueOf(mHSV[2]);
+                    String format = "%1$03d";
+                    String mString = String.format(format, (int) mHSV[0]) + String.format(format, (int) mHSV[1]) + String.format(format, (int) mHSV[2]);
+                    hexValue = String.format("#%06X", (0xFFFFFF & colorPicker.getColor()));
                     db.addFavorite(colorPicker.getColor(), mString, hexValue, "A:" + Integer.toHexString(opacityValue).toUpperCase() + " " + hexValue, "(" + Integer.parseInt("" + hexValue.charAt(1) + hexValue.charAt(2), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt("" + hexValue.charAt(5) + hexValue.charAt(6), 16) + ")", "A:" + opacityValue + " (" + Integer.parseInt(String.valueOf(hexValue.charAt(1) + hexValue.charAt(2)), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt(String.valueOf(hexValue.charAt(5) + hexValue.charAt(6)), 16) + ")");
                 }
             }

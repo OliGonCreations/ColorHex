@@ -29,5 +29,18 @@
             android:background="?android:attr/dividerVertical"
             android:id="@+id/view"/>
 
+    <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/no_entries"
+            android:fontFamily="sans-serif-light"
+            android:textSize="26sp"
+            android:textColor="#ff555555"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
+
 
 </RelativeLayout>

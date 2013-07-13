@@ -30,5 +30,6 @@
     <string name="contextual_menu">\u0020ausgewählt</string>
     <string name="btn_filter_color">Nach Farbe sortieren</string>
     <string name="btn_filter_date">Nach Datum sortieren</string>
+    <string name="no_entries">Keine Einträge</string>
 
 </resources>
