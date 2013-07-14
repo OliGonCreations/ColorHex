@@ -29,12 +29,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +46,11 @@ import com.jonas.colorhex.color.SVBar;
 import com.jonas.colorhex.stickylistview.StickyListHeadersAdapter;
 import com.jonas.colorhex.stickylistview.StickyListHeadersListView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class ActivityMain extends Activity implements FragmentManager.OnBackStackChangedListener {
 
@@ -166,14 +172,11 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
     public static class FavoriteFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-        ActionMode.Callback mCallback;
-        ActionMode mMode;
-        private StickyListHeadersListView mStickyListView;
-        private int mSelected = 0;
-        private View customActionBarView, mDividerView;
-        private Button mFilter;
-        private TextView mEmptyView;
-        private CustomListViewAdapter adapter;
+        private static StickyListHeadersListView mStickyListView;
+        private static View customActionBarView, mDividerView;
+        private static Button mFilter;
+        private static TextView mEmptyView;
+        private CustomListViewAdapter mAdapter;
         private boolean mIsSorted = false;
 
         public FavoriteFragment() {
@@ -193,23 +196,17 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // "Done"
                             editModeSelected(false);
                         }
                     });
 
-            mCallback = new ActionMode.Callback() {
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    mode.setTitle(mSelected + res.getString(R.string.contextual_menu));
-                    return true;
-                }
 
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    mMode = null;
-                    mSelected = 0;
-                }
+            mStickyListView = (StickyListHeadersListView) rootView.findViewById(R.id.lvSticky);
+            mStickyListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+            mStickyListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+                private int nr = 0;
 
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -218,24 +215,54 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                 }
 
                 @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    StringBuilder sb = new StringBuilder();
+                    Set<Integer> positions = mAdapter.getCurrentCheckedPosition();
+                    for (Integer pos : positions) {
+                        sb.append(" " + pos + ",");
+                    }
                     switch (item.getItemId()) {
                         case R.id.con_action_delete:
-                            Toast.makeText(getActivity(), "WIP", Toast.LENGTH_SHORT).show();
+                            mAdapter.deleteItem(mAdapter.getCurrentCheckedPosition());
+                            mAdapter.clearSelection();
+                            nr = 0;
                             mode.finish();
                             break;
                         case R.id.con_action_share:
-                            Toast.makeText(getActivity(), "WIP", Toast.LENGTH_SHORT).show();
                             break;
-                        case R.id.con_action_select_all:
-                            Toast.makeText(getActivity(), "WIP", Toast.LENGTH_SHORT).show();
-                            break;
+                        //case R.id.con_action_select_all:
+                        //    mAdapter.selectAll();
+                        //    break;
                     }
                     return false;
                 }
-            };
 
-            mStickyListView = (StickyListHeadersListView) rootView.findViewById(R.id.lvSticky);
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    mAdapter.clearSelection();
+                    nr = 0;
+                }
+
+                @Override
+                public void onItemCheckedStateChanged(ActionMode mode,
+                                                      int position, long id, boolean checked) {
+                    if (checked) {
+                        nr++;
+                        mAdapter.setNewSelection(position, checked);
+                    } else {
+                        nr--;
+                        mAdapter.removeSelection(position);
+                    }
+                    mode.setTitle(nr + getString(R.string.contextual_menu));
+
+                }
+
+            });
             mFilter = (Button) rootView.findViewById(R.id.btn_filter);
             mDividerView = rootView.findViewById(R.id.view);
             mEmptyView = (TextView) rootView.findViewById(R.id.tvEmpty);
@@ -258,41 +285,32 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             int index = mStickyListView.getFirstVisiblePosition();
             View v = mStickyListView.getChildAt(0);
             int top = (v == null) ? 0 : v.getTop();
-            adapter = new CustomListViewAdapter(getActivity(), db.getAllFavColors(mIsSorted), db.getAllRecColors(mIsSorted), new String[]{res.getString(R.string.list_header_favorite), res.getString(R.string.list_header_recent)}, db.getAllFavValues(1, mIsSorted), db.getAllRecValues(1, mIsSorted));
-            if (adapter.isEmpty()) {
-                mFilter.setVisibility(View.GONE);
-                mDividerView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.VISIBLE);
+            mAdapter = new CustomListViewAdapter(getActivity(), db.getAllFavColors(mIsSorted), db.getAllRecColors(mIsSorted), new String[]{res.getString(R.string.list_header_favorite), res.getString(R.string.list_header_recent)}, db.getAllFavValues(1, mIsSorted), db.getAllRecValues(1, mIsSorted));
+            if (mAdapter.isEmpty()) {
+                listIsEmpty();
             } else {
-                mStickyListView.setAdapter(adapter);
+                mStickyListView.setAdapter(mAdapter);
                 mStickyListView.setSelectionFromTop(index, top);
                 mStickyListView.setOnItemClickListener(this);
             }
         }
 
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            /*if(mMode!=null)
-                return;
-            else
-                mMode = getActivity().startActionMode(mCallback);
-            mSelected++;
-            mMode.setTitle(mSelected + res.getString(R.string.contextual_menu));*/
-            editModeSelected(true);
+        public static void listIsEmpty() {
+            mFilter.setVisibility(View.GONE);
+            mDividerView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
         }
 
         @Override
-        public void onPause() {
-            super.onPause();
-            editModeSelected(false);
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            mStickyListView.setItemChecked(i, !mAdapter.isPositionChecked(i));
         }
 
         public void editModeSelected(boolean selected) {
             final ActionBar actionBar = this.getActivity().getActionBar();
             if (selected) {
                 actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM,
-                        ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME
-                                | ActionBar.DISPLAY_SHOW_TITLE);
+                        ActionBar.DISPLAY_SHOW_CUSTOM);
                 actionBar.setCustomView(customActionBarView);
             } else {
                 actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE,
@@ -600,6 +618,9 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         private List<Integer> colorsRec, colorsFav;
         private String[] headers;
         private boolean empty = false;
+        private DatabaseHandler db;
+
+        private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
 
         public CustomListViewAdapter(Context context, List<Integer> colorsFav, List<Integer> colorsRec, String[] headers, List<String> codeFav, List<String> codeRec) {
             inflater = LayoutInflater.from(context);
@@ -610,10 +631,65 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             this.codeRec = codeRec;
             if (colorsFav.size() == 0 && colorsRec.size() == 0)
                 empty = true;
+            db = new DatabaseHandler(context);
         }
 
         public boolean isEmpty() {
-            return empty;
+            return colorsFav.size() == 0 && colorsRec.size() == 0;
+        }
+
+        public void setNewSelection(int position, boolean value) {
+            mSelection.put(position, value);
+            notifyDataSetChanged();
+        }
+
+        public boolean isPositionChecked(int position) {
+            Boolean result = mSelection.get(position);
+            return result == null ? false : result;
+        }
+
+        public Set<Integer> getCurrentCheckedPosition() {
+            return mSelection.keySet();
+        }
+
+        public void removeSelection(int position) {
+            mSelection.remove(position);
+            notifyDataSetChanged();
+        }
+
+        public void clearSelection() {
+            mSelection = new HashMap<Integer, Boolean>();
+            notifyDataSetChanged();
+        }
+
+        public void selectAll() {
+            for (int i = 0; i < getCount(); i++) {
+                mSelection.put(i, true);
+            }
+            notifyDataSetChanged();
+        }
+
+        public void deleteItem(Set<Integer> positions) {
+            List<Integer> indices = new ArrayList<Integer>(positions);
+            Collections.sort(indices, Collections.reverseOrder());
+            int index;
+            for (int pos : indices) {
+                if (colorsFav == null) index = 0;
+                else index = colorsFav.size();
+                if (pos >= index) {
+                    db.deleteRecent(colorsRec.get(pos - index));
+                    colorsRec.remove(pos - index);
+                    codeRec.remove(pos - index);
+                } else {
+                    db.deleteFavorite(colorsFav.get(pos));
+                    colorsFav.remove(pos);
+                    codeFav.remove(pos);
+                }
+            }
+            notifyDataSetChanged();
+            if (isEmpty()) {
+                ActivityMain.FavoriteFragment.listIsEmpty();
+            }
         }
 
         @Override
@@ -623,7 +699,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
         @Override
         public Object getItem(int position) {
-            if (position > colorsFav.size())
+            if (position >= colorsFav.size())
                 return colorsRec.get(position - colorsFav.size());
             else
                 return colorsFav.get(position);
@@ -648,17 +724,22 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                 holder = (ViewHolder) convertView.getTag();
             }
             int index;
-            if (colorsFav == null)
-                index = 0;
+            if (colorsFav == null) index = 0;
             else index = colorsFav.size();
             if (position >= index) {
                 holder.colorView.setBackgroundColor(colorsRec.get(position - index));
                 holder.text.setText(codeRec.get(position - index));
-
             } else {
                 holder.colorView.setBackgroundColor(colorsFav.get(position));
                 holder.text.setText(codeFav.get(position));
             }
+
+            if (mSelection.get(position) != null) {
+                convertView.setActivated(true);
+            } else {
+                convertView.setActivated(false);
+            }
+
 
             return convertView;
         }

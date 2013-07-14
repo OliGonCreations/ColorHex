@@ -132,6 +132,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return values;
     }
 
+    public void deleteFavorite(Integer color) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(NAME_FAVORITE, KEY_COLOR + "=" + color, null);
+        db.close();
+    }
+
+    public void deleteRecent(Integer color) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(NAME_RECENT, KEY_COLOR + "=" + color, null);
+        db.close();
+    }
+
 
     public void deleteFavorites() {
         SQLiteDatabase db = this.getWritableDatabase();
