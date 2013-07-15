@@ -2,18 +2,13 @@
     <item
             android:id="@+id/con_action_delete"
             android:title="@string/action_delete"
-            android:icon="@android:drawable/ic_menu_delete"
+            android:icon="@drawable/ic_action_delete"
             />
 
     <item
             android:id="@+id/con_action_share"
             android:title="@string/action_share"
-            android:icon="@android:drawable/ic_menu_share"
+            android:icon="@drawable/ic_action_share"
             />
 
-    <!--<item
-            android:id="@+id/con_action_select_all"
-            android:title="@string/action_select_all"
-            android:icon="@drawable/ic_action_select_all"
-            />-->
 </menu>

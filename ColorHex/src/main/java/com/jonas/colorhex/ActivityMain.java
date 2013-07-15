@@ -1,7 +1,5 @@
 package com.jonas.colorhex;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -133,7 +131,7 @@ public class ActivityMain extends FragmentActivity {
                                  Bundle savedInstanceState) {
             ViewGroup rootView = (ViewGroup) inflater
                     .inflate(R.layout.fragment_favorite, container, false);
-
+/*
             inflater = (LayoutInflater) getActivity().getActionBar().getThemedContext()
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             customActionBarView = inflater.inflate(R.layout.ab_contextual_view, null);
@@ -145,7 +143,7 @@ public class ActivityMain extends FragmentActivity {
                         }
                     });
 
-
+*/
             mStickyListView = (StickyListHeadersListView) rootView.findViewById(R.id.lvSticky);
             mStickyListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
@@ -249,7 +247,7 @@ public class ActivityMain extends FragmentActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             mStickyListView.setItemChecked(i, !mAdapter.isPositionChecked(i));
         }
-
+/*
         public void editModeSelected(boolean selected) {
             final ActionBar actionBar = this.getActivity().getActionBar();
             if (selected) {
@@ -262,7 +260,7 @@ public class ActivityMain extends FragmentActivity {
                                 | ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_TITLE);
 
             }
-        }
+        } */
     }
 
     public static class CardFrontFragment extends Fragment implements ColorPicker.OnColorChangedListener, CompoundButton.OnCheckedChangeListener {
@@ -399,7 +397,6 @@ public class ActivityMain extends FragmentActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-
             color1 = (ImageView) view.findViewById(R.id.color1);
             color2 = (ImageView) view.findViewById(R.id.color2);
             color3 = (ImageView) view.findViewById(R.id.color3);
@@ -660,13 +657,6 @@ public class ActivityMain extends FragmentActivity {
             notifyDataSetChanged();
         }
 
-        /*public void selectAll() {
-            for (int i = 0; i < getCount(); i++) {
-                mSelection.put(i, true);
-            }
-            notifyDataSetChanged();
-        }*/
-
         public void deleteItem(Set<Integer> positions) {
             List<Integer> indices = new ArrayList<Integer>(positions);
             Collections.sort(indices, Collections.reverseOrder());
@@ -737,8 +727,6 @@ public class ActivityMain extends FragmentActivity {
             } else {
                 convertView.setActivated(false);
             }
-
-
             return convertView;
         }
 
