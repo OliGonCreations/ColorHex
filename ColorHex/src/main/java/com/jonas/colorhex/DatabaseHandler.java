@@ -13,7 +13,7 @@ import java.util.List;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private final static String DATABASE_NAME = "ColorHex";
-    private final static int DATABASE_VERSION = 2;
+    private final static int DATABASE_VERSION = 3;
 
     private final static String NAME_FAVORITE = "favorite";
     private final static String NAME_RECENT = "recent";
@@ -32,8 +32,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_FAVORITE = "CREATE TABLE " + NAME_FAVORITE + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_COLOR + " TEXT," + KEY_HSV + " TEXT," + KEY_HEX + " TEXT," + KEY_HEXA + " TEXT," + KEY_DEC + " TEXT," + KEY_DECA + " TEXT)";
-        String CREATE_RECENT = "CREATE TABLE " + NAME_RECENT + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_COLOR + " TEXT," + KEY_HSV + " TEXT," + KEY_HEX + " TEXT," + KEY_HEXA + " TEXT," + KEY_DEC + " TEXT," + KEY_DECA + " TEXT)";
+        String CREATE_FAVORITE = "CREATE TABLE " + NAME_FAVORITE + "(" + KEY_ID + " INTEGER," + KEY_COLOR + " TEXT PRIMARY KEY," + KEY_HSV + " TEXT," + KEY_HEX + " TEXT," + KEY_HEXA + " TEXT," + KEY_DEC + " TEXT," + KEY_DECA + " TEXT)";
+        String CREATE_RECENT = "CREATE TABLE " + NAME_RECENT + "(" + KEY_ID + " INTEGER," + KEY_COLOR + " TEXT PRIMARY KEY," + KEY_HSV + " TEXT," + KEY_HEX + " TEXT," + KEY_HEXA + " TEXT," + KEY_DEC + " TEXT," + KEY_DECA + " TEXT)";
         db.execSQL(CREATE_FAVORITE);
         db.execSQL(CREATE_RECENT);
     }

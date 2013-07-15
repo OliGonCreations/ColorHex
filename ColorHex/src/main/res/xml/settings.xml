@@ -5,11 +5,11 @@
                 android:defaultValue="false"
                 android:key="pref_alpha"/>
         <ListPreference
-            android:title="@string/pref_title_clipboard"
-            android:defaultValue="0"
-            android:key="pref_clipboard"
-            android:entries="@array/pref_clipboard_items"
-            android:entryValues="@array/pref_clipboard_items_values"/>
+                android:title="@string/pref_title_clipboard"
+                android:defaultValue="0"
+                android:key="pref_clipboard"
+                android:entries="@array/pref_clipboard_items"
+                android:entryValues="@array/pref_clipboard_items_values"/>
 
         <Preference
                 android:title="@string/pref_title_delete_db_fav"
@@ -20,4 +20,12 @@
                 android:key="pref_delete_db_rec"
                 />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cat_support">
+        <Preference
+                android:title="@string/action_license"
+                android:key="pref_license"
+                />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

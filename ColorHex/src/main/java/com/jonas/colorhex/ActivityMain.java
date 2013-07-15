@@ -2,33 +2,29 @@ package com.jonas.colorhex;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ActionMode;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -52,52 +48,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class ActivityMain extends Activity implements FragmentManager.OnBackStackChangedListener {
+public class ActivityMain extends FragmentActivity {
 
 
-    private Handler mHandler = new Handler();
     private static DatabaseHandler db;
-
-    private boolean mShowingBack = false;
+    private static ClipboardManager clipboard;
 
     private static SharedPreferences sp;
 
-    private GestureDetector gestureDetector;
-    View.OnTouchListener gestureListener;
-    private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-
     public static Resources res;
+    public static boolean favIsShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_pager);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         db = new DatabaseHandler(this);
         res = getResources();
+        clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
 
-        if (savedInstanceState == null)
-            getFragmentManager().beginTransaction().add(R.id.container, new CardFrontFragment()).commit();
-        else
-            mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
-        getFragmentManager().addOnBackStackChangedListener(this);
-
-        gestureDetector = new GestureDetector(this, new MyGestureDetector());
-        gestureListener = new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        };
-        findViewById(R.id.container).setOnTouchListener(gestureListener);
-        findViewById(R.id.container).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+        ViewPager mPager = (ViewPager) findViewById(R.id.pager);
+        if (mPager != null) {
+            mPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
+            mPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        } else {
+            getSupportFragmentManager().beginTransaction().add(R.id.leftCard, new CardFrontFragment()).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.rightCard, new CardBackFragment()).commit();
+        }
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,17 +88,14 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_flip) {
-            flipCard();
-        } else if (item.getItemId() == R.id.action_license) {
-            DialogFragment newFragment = new LicenseDialogFragment();
-            newFragment.show(getFragmentManager(), "license");
-        } else if (item.getItemId() == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (item.getItemId() == R.id.action_favorite) {
-            getFragmentManager().beginTransaction().replace(R.id.container, new FavoriteFragment()).addToBackStack(null).commit();
+            getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new FavoriteFragment()).addToBackStack(null).commit();
+            favIsShown = true;
+            invalidateOptionsMenu();
         } else if (item.getItemId() == android.R.id.home && findViewById(R.id.lvSticky) != null) {
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getSupportFragmentManager();
             if (fm.getBackStackEntryCount() > 0) {
                 fm.popBackStack();
             }
@@ -128,46 +106,14 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (mShowingBack)
-            menu.findItem(R.id.action_flip).setIcon(R.drawable.ic_action_flip_front);
-        else
-            menu.findItem(R.id.action_flip).setIcon(R.drawable.ic_action_flip_back);
-        if (findViewById(R.id.lvSticky) != null) {
-            menu.findItem(R.id.action_flip).setVisible(false);
+        if (favIsShown) {
             menu.findItem(R.id.action_favorite).setVisible(false);
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         } else {
-            menu.findItem(R.id.action_flip).setVisible(true);
             menu.findItem(R.id.action_favorite).setVisible(true);
+            getActionBar().setDisplayHomeAsUpEnabled(false);
         }
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    private void flipCard() {
-        if (mShowingBack) {
-            getFragmentManager().popBackStack();
-            InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            im.hideSoftInputFromWindow(findViewById(R.id.container).getApplicationWindowToken(), 0);
-            return;
-        }
-        mShowingBack = true;
-        getFragmentManager()
-                .beginTransaction().setCustomAnimations(
-                R.animator.card_flip_right_in, R.animator.card_flip_right_out,
-                R.animator.card_flip_left_in, R.animator.card_flip_left_out).replace(R.id.container, new CardBackFragment())
-                .addToBackStack(null).commit();
-
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                invalidateOptionsMenu();
-            }
-        });
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
-        invalidateOptionsMenu();
     }
 
     public static class FavoriteFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -185,7 +131,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
             ViewGroup rootView = (ViewGroup) inflater
                     .inflate(R.layout.fragment_favorite, container, false);
 
@@ -221,11 +166,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    StringBuilder sb = new StringBuilder();
-                    Set<Integer> positions = mAdapter.getCurrentCheckedPosition();
-                    for (Integer pos : positions) {
-                        sb.append(" " + pos + ",");
-                    }
                     switch (item.getItemId()) {
                         case R.id.con_action_delete:
                             mAdapter.deleteItem(mAdapter.getCurrentCheckedPosition());
@@ -235,9 +175,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                             break;
                         case R.id.con_action_share:
                             break;
-                        //case R.id.con_action_select_all:
-                        //    mAdapter.selectAll();
-                        //    break;
                     }
                     return false;
                 }
@@ -274,6 +211,13 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             });
             sortList();
             return rootView;
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            favIsShown = false;
+            getActivity().invalidateOptionsMenu();
         }
 
         private void sortList() {
@@ -323,16 +267,15 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
 
     public static class CardFrontFragment extends Fragment implements ColorPicker.OnColorChangedListener, CompoundButton.OnCheckedChangeListener {
 
-        private TextView tvOutputHex, tvOutputDec;
+        private static TextView tvOutputHex, tvOutputDec;
         private static ColorPicker colorPicker;
-        private SVBar svBar;
-        private OpacityBar opacityBar;
-        private CompoundButton star;
+        private static SVBar svBar;
+        private static OpacityBar opacityBar;
+        private static CompoundButton star;
         private static Context ctx;
-        private static ClipboardManager clipboard;
         private static String hexValue;
         private static int opacityValue;
-        private boolean alphaShown;
+        private static boolean alphaShown;
         private static float[] mHSV = new float[3];
 
         public CardFrontFragment() {
@@ -349,7 +292,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             super.onViewCreated(view, savedInstanceState);
             ctx = getActivity();
             alphaShown = sp.getBoolean("pref_alpha", false);
-            clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
             colorPicker = (ColorPicker) view.findViewById(R.id.picker);
             svBar = (SVBar) view.findViewById(R.id.svbar);
             opacityBar = (OpacityBar) view.findViewById(R.id.opacitybar);
@@ -375,7 +317,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             sp.edit().putInt("color", colorPicker.getColor()).commit();
         }
 
-        private void setColor(int color) {
+        public static void setColor(int color) {
             colorPicker.setOldCenterColor(color);
             hexValue = String.format("#%06X", (0xFFFFFF & colorPicker.getColor()));
             opacityValue = opacityBar.getOpacity();
@@ -393,6 +335,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         @Override
         public void onColorChanged(int color) {
             setColor(color);
+            star.setChecked(false);
         }
 
         public static void onCenterPressed() {
@@ -441,6 +384,8 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         private ImageView color1, color2, color3;
         public static EditText etColor1, etColor2, etColor3;
         private Button btClear1, btClear2, btClear3;
+        private ActionMode mActionMode;
+        private int selectedColor = 0;
 
         public CardBackFragment() {
         }
@@ -470,6 +415,9 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             btClear1.setOnClickListener(this);
             btClear2.setOnClickListener(this);
             btClear3.setOnClickListener(this);
+            color1.setOnClickListener(this);
+            color2.setOnClickListener(this);
+            color3.setOnClickListener(this);
             saveText();
             etColor1.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -570,45 +518,98 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
                     etColor3.setText("#");
                     saveText();
                     break;
+                case R.id.color1:
+                case R.id.color2:
+                case R.id.color3:
+                    if (mActionMode != null) {
+                        break;
+                    }
+                    mActionMode = getActivity().startActionMode(mActionModeCallback);
+                    selectedColor = view.getId();
+                    break;
             }
         }
-    }
 
-    public class LicenseDialogFragment extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setView(inflater.inflate(R.layout.dialog_license, null))
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            getDialog().dismiss();
+        private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.context_menu_color, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                String text = "";
+                switch (selectedColor) {
+                    case R.id.color1:
+                        text = etColor1.getText().toString();
+                        break;
+                    case R.id.color2:
+                        text = etColor2.getText().toString();
+                        break;
+                    case R.id.color3:
+                        text = etColor3.getText().toString();
+                        break;
+                }
+                switch (item.getItemId()) {
+                    case R.id.con_action_clipboard:
+                        ClipData clip = android.content.ClipData.newPlainText("Copied Color", text);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(getActivity(), getString(R.string.clipboard), Toast.LENGTH_SHORT).show();
+                        selectedColor = 0;
+                        mode.finish();
+                        return true;
+                    case R.id.con_action_fav:
+                        if (!text.contains("#"))
+                            text = "#" + text;
+                        try {
+                            int color = Color.parseColor(text);
+                            float[] mHSV = new float[3];
+                            Color.colorToHSV(color, mHSV);
+                            String format = "%1$03d";
+                            String mString = String.format(format, (int) mHSV[0]) + String.format(format, (int) mHSV[1]) + String.format(format, (int) mHSV[2]);
+                            String hexValue = String.format("#%06X", (0xFFFFFF & color));
+                            db.addFavorite(color, mString, hexValue, "A:" + Integer.toHexString(Color.alpha(color)).toUpperCase() + " " + hexValue, "(" + Integer.parseInt("" + hexValue.charAt(1) + hexValue.charAt(2), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt("" + hexValue.charAt(5) + hexValue.charAt(6), 16) + ")", "A:" + Color.alpha(color) + " (" + Integer.parseInt(String.valueOf(hexValue.charAt(1) + hexValue.charAt(2)), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt(String.valueOf(hexValue.charAt(5) + hexValue.charAt(6)), 16) + ")");
+                            Toast.makeText(getActivity(), getString(R.string.saved_to_favorite), Toast.LENGTH_SHORT).show();
+
+                        } catch (Exception e) {
+                            Toast.makeText(getActivity(), getString(R.string.error_no_color), Toast.LENGTH_SHORT).show();
                         }
-                    });
-            return builder.create();
-        }
-    }
-
-    class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            try {
-                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-                    return false;
-                if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY && !mShowingBack && findViewById(R.id.lvSticky) == null)
-                    flipCard();
-                else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY && mShowingBack && findViewById(R.id.lvSticky) == null)
-                    flipCard();
-            } catch (Exception e) {
-
+                        selectedColor = 0;
+                        mode.finish();
+                        return true;
+                    case R.id.con_action_edit:
+                        if (!text.contains("#"))
+                            text = "#" + text;
+                        try {
+                            int color = Color.parseColor(text);
+                            CardFrontFragment.setColor(color);
+                            CardFrontFragment.colorPicker.setColor(color);
+                            CardFrontFragment.colorPicker.setNewCenterColor(color);
+                            CardFrontFragment.colorPicker.changeValueBarColor(color);
+                        } catch (Exception e) {
+                            //Toast.makeText(getActivity(), getString(R.string.error_no_color), Toast.LENGTH_SHORT).show();
+                            Log.e("ColorHex", e.toString());
+                        }
+                        selectedColor = 0;
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
             }
-            return false;
-        }
 
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return super.onDown(e);
-        }
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mActionMode = null;
+            }
+        };
     }
 
     public static class CustomListViewAdapter extends BaseAdapter implements StickyListHeadersAdapter {
@@ -617,7 +618,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
         private List<String> codeFav, codeRec;
         private List<Integer> colorsRec, colorsFav;
         private String[] headers;
-        private boolean empty = false;
         private DatabaseHandler db;
 
         private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
@@ -629,8 +629,6 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             this.headers = headers;
             this.codeFav = codeFav;
             this.codeRec = codeRec;
-            if (colorsFav.size() == 0 && colorsRec.size() == 0)
-                empty = true;
             db = new DatabaseHandler(context);
         }
 
@@ -662,12 +660,12 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             notifyDataSetChanged();
         }
 
-        public void selectAll() {
+        /*public void selectAll() {
             for (int i = 0; i < getCount(); i++) {
                 mSelection.put(i, true);
             }
             notifyDataSetChanged();
-        }
+        }*/
 
         public void deleteItem(Set<Integer> positions) {
             List<Integer> indices = new ArrayList<Integer>(positions);
@@ -688,7 +686,7 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             }
             notifyDataSetChanged();
             if (isEmpty()) {
-                ActivityMain.FavoriteFragment.listIsEmpty();
+                FavoriteFragment.listIsEmpty();
             }
         }
 
@@ -777,6 +775,61 @@ public class ActivityMain extends Activity implements FragmentManager.OnBackStac
             ImageView colorView;
         }
 
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new CardFrontFragment();
+                case 1:
+                    return new CardBackFragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    }
+
+    public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+        private float MIN_SCALE = 0.85f;
+        private float MIN_ALPHA = 0.5f;
+
+        public void transformPage(View view, float position) {
+            int pageWidth = view.getWidth();
+            int pageHeight = view.getHeight();
+
+            if (position < -1) {
+                view.setAlpha(0);
+            } else if (position <= 1) {
+                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+                float verticalMargin = pageHeight * (1 - scaleFactor) / 2;
+                float horizontalMargin = pageWidth * (1 - scaleFactor) / 2;
+                if (position < 0) {
+                    view.setTranslationX(horizontalMargin - verticalMargin / 2);
+                } else {
+                    view.setTranslationX(-horizontalMargin + verticalMargin / 2);
+                }
+
+                view.setScaleX(scaleFactor);
+                view.setScaleY(scaleFactor);
+                view.setAlpha(MIN_ALPHA +
+                        (scaleFactor - MIN_SCALE) /
+                                (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+            } else {
+                view.setAlpha(0);
+            }
+        }
     }
 
 }

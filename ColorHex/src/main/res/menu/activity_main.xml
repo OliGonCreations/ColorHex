@@ -5,18 +5,8 @@
             android:showAsAction="always"
             android:icon="@drawable/ic_action_favorite"/>
     <item
-            android:id="@+id/action_flip"
-            android:title="@string/action_flip"
-            android:showAsAction="always"
-            android:icon="@drawable/ic_action_flip_front"/>
-    <item
             android:id="@+id/action_settings"
             android:title="@string/action_settings"
-            android:orderInCategory="99"
-            android:showAsAction="never"/>
-    <item
-            android:id="@+id/action_license"
-            android:title="@string/action_license"
             android:orderInCategory="100"
             android:showAsAction="never"/>
 </menu>

@@ -3,15 +3,19 @@
 
     <string name="app_name">ColorHex</string>
     <string name="clipboard">In Zwischenablage kopiert.</string>
+    <string name="saved_to_favorite">Zu Favoriten hinzugefügt.</string>
+    <string name="error_on_favorite">Farbe konnte nicht gespeichert werden.</string>
+    <string name="error_no_color">Auswahl ist keine Farbe.</string>
     <string name="action_delete">Löschen</string>
     <string name="action_share">Teilen</string>
+    <string name="action_edit">Bearbeiten</string>
     <string name="action_select_all">Alles auswählen</string>
-    <string name="action_done">Fertig</string>
-    <string name="action_flip">Flip</string>
     <string name="action_favorite">Favoriten</string>
+    <string name="action_favorite_1">Favorisieren</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_license">Lizenz</string>
-    <string name="license">\u0020\u0020Copyright 2012 Lars Werkman\nLicensed under the Apache
+    <string name="license">\u0020\u0020In dieser App werden Inhalte, die unter der Apache Lizenz
+        laufen, verwendet:\n\n\u0020\u0020Copyright 2012 Lars Werkman\nLicensed under the Apache
         License, Version
         2.0 (the "License"); you may not use this file except in compliance with the License. You
         may obtain a copy of the License at
@@ -22,7 +26,7 @@
         and limitations under the License.
     </string>
     <string name="list_header_favorite">@string/action_favorite</string>
-    <string name="list_header_recent">Kürzlich verwendet</string>
+    <string name="list_header_recent">Zuletzt verwendet</string>
     <string name="pref_cat_main">Allgemein</string>
     <string name="pref_title_alpha">Alphakanal anzeigen</string>
     <string name="pref_title_clipboard">Zwischenablage</string>

@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/con_action_clipboard"
+            android:title="@string/pref_title_clipboard"
+            android:icon="@drawable/ic_action_copy"
+            />
+    <item
+            android:id="@+id/con_action_edit"
+            android:title="@string/action_edit"
+            android:icon="@drawable/ic_action_edit"
+            />
+    <item
+            android:id="@+id/con_action_fav"
+            android:title="@string/action_favorite_1"
+            android:icon="@drawable/ic_action_favorite"/>
+    <item
+            android:id="@+id/con_action_share"
+            android:title="@string/action_share"
+            android:icon="@drawable/ic_action_share"
+            />
+
+
+</menu>
