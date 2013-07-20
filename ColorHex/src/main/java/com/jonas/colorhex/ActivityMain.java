@@ -401,8 +401,7 @@ public class ActivityMain extends FragmentActivity {
     public static class CardBackFragment extends Fragment implements View.OnClickListener {
 
         private ImageView color1, color2, color3, color4, color5;
-        public static EditText etColor2, etColor3;
-        public static ExtendedEditText etColor1, etColor4, etColor5;
+        public static ExtendedEditText etColor1, etColor2, etColor3, etColor4, etColor5;
         private Button btClear1, btClear2, btClear3, btClear4, btClear5, btAdd, btRemove;
         public static ActionMode mActionMode;
         private int selectedColor = 0, mCount = 0;
@@ -429,7 +428,7 @@ public class ActivityMain extends FragmentActivity {
                         char[] acceptedChars = new char[]{'a', 'b', 'c', 'd', 'e', 'f',
                                 'A', 'B', 'C', 'D', 'E', 'F',
                                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                                ','};
+                                ',', '#'};
 
                         for (int index = start; index < end; index++) {
                             if (!new String(acceptedChars).contains(String.valueOf(source.charAt(index)))) {
@@ -448,8 +447,8 @@ public class ActivityMain extends FragmentActivity {
             color4 = (ImageView) view.findViewById(R.id.color4);
             color5 = (ImageView) view.findViewById(R.id.color5);
             etColor1 = (ExtendedEditText) view.findViewById(R.id.etColor1);
-            etColor2 = (EditText) view.findViewById(R.id.etColor2);
-            etColor3 = (EditText) view.findViewById(R.id.etColor3);
+            etColor2 = (ExtendedEditText) view.findViewById(R.id.etColor2);
+            etColor3 = (ExtendedEditText) view.findViewById(R.id.etColor3);
             etColor4 = (ExtendedEditText) view.findViewById(R.id.etColor4);
             etColor5 = (ExtendedEditText) view.findViewById(R.id.etColor5);
             etColor1.setFilters(filters);
@@ -462,18 +461,22 @@ public class ActivityMain extends FragmentActivity {
             btClear5 = (Button) view.findViewById(R.id.btClear5);
             if (isJelly) {
                 etColor1.setPrefix("#");
+                etColor2.setPrefix("#");
+                etColor3.setPrefix("#");
                 etColor4.setPrefix("#");
                 etColor5.setPrefix("#");
                 etColor1.setText(sp.getString(etColor1.getId() + "", ""));
+                etColor2.setText(sp.getString(etColor2.getId() + "", ""));
+                etColor3.setText(sp.getString(etColor3.getId() + "", ""));
                 etColor4.setText(sp.getString(etColor4.getId() + "", ""));
                 etColor5.setText(sp.getString(etColor5.getId() + "", ""));
             } else {
-                etColor1.setText(sp.getString("#" + etColor1.getId(), "#"));
+                etColor1.setText(sp.getString(etColor1.getId() + "", "#"));
+                etColor2.setText(sp.getString(etColor2.getId() + "", "#"));
+                etColor3.setText(sp.getString(etColor3.getId() + "", "#"));
                 etColor4.setText(sp.getString(etColor4.getId() + "", "#"));
                 etColor5.setText(sp.getString(etColor5.getId() + "", "#"));
             }
-            etColor2.setText(sp.getString(etColor2.getId() + "", "#"));
-            etColor3.setText(sp.getString(etColor3.getId() + "", "#"));
             btClear1.setOnClickListener(this);
             btClear2.setOnClickListener(this);
             btClear3.setOnClickListener(this);
@@ -520,17 +523,16 @@ public class ActivityMain extends FragmentActivity {
         private void saveText(EditText et, ImageView img) {
             try {
                 String s = et.getText().toString();
-                int color;
                 if (!s.contains("#"))
                     s = "#" + s;
                 if (s.contains(",")) {
                     String[] a = s.split(",");
                     a[0] = a[0].replace("#", "");
-                    s = "#" + Integer.toHexString(Integer.parseInt(a[0]))
-                            + Integer.toHexString(Integer.parseInt(a[1]))
-                            + Integer.toHexString(Integer.parseInt(a[2]));
+                    s = "#" + String.format("%02X", 0xFFFFFF & Integer.parseInt(a[0]))
+                            + String.format("%02X", 0xFFFFFF & Integer.parseInt(a[1]))
+                            + String.format("%02X", 0xFFFFFF & Integer.parseInt(a[2]));
                 }
-                color = Color.parseColor(s);
+                int color = Color.parseColor(s);
                 img.setBackgroundColor(color);
             } catch (Exception e) {
                 img.setBackgroundColor(Color.WHITE);
@@ -543,18 +545,24 @@ public class ActivityMain extends FragmentActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btClear1:
-                    if (!isJelly)
-                        etColor1.setText("#");
-                    else
+                    if (isJelly)
                         etColor1.setText("");
+                    else
+                        etColor1.setText("#");
                     saveText(etColor1, color1);
                     break;
                 case R.id.btClear2:
-                    etColor2.setText("#");
+                    if (isJelly)
+                        etColor2.setText("");
+                    else
+                        etColor2.setText("#");
                     saveText(etColor2, color2);
                     break;
                 case R.id.btClear3:
-                    etColor3.setText("#");
+                    if (isJelly)
+                        etColor3.setText("");
+                    else
+                        etColor3.setText("#");
                     saveText(etColor3, color3);
                     break;
                 case R.id.btClear4:
@@ -665,9 +673,9 @@ public class ActivityMain extends FragmentActivity {
                             if (text.contains(",")) {
                                 String[] a = text.split(",");
                                 a[0] = a[0].replace("#", "");
-                                text = "#" + Integer.toHexString(Integer.parseInt(a[0]))
-                                        + Integer.toHexString(Integer.parseInt(a[1]))
-                                        + Integer.toHexString(Integer.parseInt(a[2]));
+                                text = "#" + String.format("%02X", 0xFFFFFF & Integer.parseInt(a[0]))
+                                        + String.format("%02X", 0xFFFFFF & Integer.parseInt(a[1]))
+                                        + String.format("%02X", 0xFFFFFF & Integer.parseInt(a[2]));
                             }
                             int color = Color.parseColor(text);
                             float[] mHSV = new float[3];

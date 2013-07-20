@@ -22,7 +22,7 @@
                 android:layout_marginRight="16dp"
                 android:imeOptions="actionDone"/>
 
-        <EditText
+        <com.jonas.colorhex.ExtendedEditText
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:id="@+id/etColor2"
@@ -35,7 +35,7 @@
                 android:layout_toLeftOf="@+id/color2"
                 android:layout_marginRight="16dp"/>
 
-        <EditText
+        <com.jonas.colorhex.ExtendedEditText
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:id="@+id/etColor3"

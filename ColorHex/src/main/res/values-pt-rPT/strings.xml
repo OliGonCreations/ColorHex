@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ColorHex</string>
+    <string name="clipboard">Copiar para o clipboard.</string>
+    <string name="saved_to_favorite">Added to favorites.</string>
+    <string name="error_on_favorite">Color couldn\'t be saved.</string>
+    <string name="error_no_color">Selection is no color.</string>
+    <string name="action_delete">Apagar</string>
+    <string name="action_share">Compartilhar</string>
+    <string name="action_select_all">Selecionar tudo</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_favorite">Favorites</string>
+    <string name="action_favorite_1">Favorite</string>
+    <string name="action_settings">Afinação</string>
+    <string name="action_license">Licencia</string>
+    <string name="license">\u0020\u0020In this App are contents used, which are running under the
+        Apache License:\n\n\u0020\u0020Copyright 2012 Lars Werkman\nLicensed under the Apache
+        License, Version
+        2.0 (the "License"); you may not use this file except in compliance with the License. You
+        may obtain a copy of the License at
+        \n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\n
+        Unless required by applicable law or agreed to in writing, software distributed under the
+        License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied. See the License for the specific language governing permissions
+        and limitations under the License.
+    </string>
+    <string name="list_header_favorite">@string/action_favorite</string>
+    <string name="list_header_recent">Usado par utilizado</string>
+    <string name="pref_cat_main">Em geral</string>
+    <string name="pref_cat_support">Support</string>
+    <string name="pref_title_alpha">Amostrar o canal alpha</string>
+    <string name="pref_title_clipboard">Clipboard</string>
+    <string name="pref_title_delete_db_fav">Apagar todos os favoritas</string>
+    <string name="pref_title_delete_db_rec">Apagar tudo usado par último</string>
+    <string name="contextual_menu">\u0020selecionado</string>
+    <string name="btn_filter_color">Ordenar por cores</string>
+    <string name="btn_filter_date">Ordenar por data</string>
+    <string name="no_entries">Sem notas</string>
+    <string name="dialog_action_delete">Apagar</string>
+    <string name="dialog_delete_fav">Apagar todos os favoritos?</string>
+    <string name="dialog_delete_rec">Apagar todo usado par último?</string>
+    <string name="share_with">Compartilhar com</string>
+    <plurals name="share_colorcode">
+        <item quantity="one">Meu cor:\u0020</item>
+        <item quantity="other">Meus cores:\u0020</item>
+    </plurals>
+
+</resources>

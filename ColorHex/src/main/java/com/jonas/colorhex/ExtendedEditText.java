@@ -12,12 +12,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-/**
- * This is an extended EditText with a Prefix and Suffix.
- * <p/>
- * As used by "Allowance" on Google Play (v1.1)
- */
-
 @SuppressLint("NewApi")
 public class ExtendedEditText extends EditText {
     // Stuff to do with our rendering
