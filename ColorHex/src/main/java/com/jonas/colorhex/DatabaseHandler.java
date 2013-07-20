@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -84,6 +85,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 colors.add(Integer.parseInt(cursor.getString(1)));
             } while (cursor.moveToNext());
         }
+        Collections.reverse(colors);
         return colors;
     }
 
@@ -99,6 +101,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 colors.add(Integer.parseInt(cursor.getString(1)));
             } while (cursor.moveToNext());
         }
+        Collections.reverse(colors);
         return colors;
     }
 
@@ -114,6 +117,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 values.add(cursor.getString(type + 2));
             } while (cursor.moveToNext());
         }
+        Collections.reverse(values);
         return values;
     }
 
@@ -129,6 +133,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 values.add(cursor.getString(type + 2));
             } while (cursor.moveToNext());
         }
+        Collections.reverse(values);
         return values;
     }
 

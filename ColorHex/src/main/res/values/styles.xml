@@ -18,6 +18,17 @@
             @drawable/activated_background_holo_light
         </item>
         <item name="android:actionBarItemBackground">@drawable/background_tabs</item>
+        <item name="android:actionModeBackground">@color/ab_red</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_action_done</item>
+        <item name="android:actionModeStyle">@style/ActionModeStyle</item>
+    </style>
+
+    <style name="ActionModeStyle" parent="android:Widget.Holo.ActionMode">
+        <item name="android:titleTextStyle">@style/ActionMode.TitleStyle</item>
+    </style>
+
+    <style name="ActionMode.TitleStyle" parent="android:TextAppearance.Holo.Widget.ActionMode.Title">
+        <item name="android:textColor">@color/ab_grey</item>
     </style>
 
     <style name="EditTextAppTheme" parent="android:Widget.EditText">

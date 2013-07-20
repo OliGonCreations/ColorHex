@@ -40,5 +40,10 @@
     <string name="dialog_action_delete">Delete</string>
     <string name="dialog_delete_fav">Delete all favorites?</string>
     <string name="dialog_delete_rec">Delete all recent used?</string>
+    <string name="share_with">Share with</string>
+    <plurals name="share_colorcode">
+        <item quantity="one">My colorcode:\u0020</item>
+        <item quantity="other">My colorcodes:\u0020</item>
+    </plurals>
 
 </resources>

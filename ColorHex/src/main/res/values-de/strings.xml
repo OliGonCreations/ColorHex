@@ -39,5 +39,10 @@
     <string name="dialog_action_delete">Löschen</string>
     <string name="dialog_delete_fav">Alle Favoriten löschen?</string>
     <string name="dialog_delete_rec">Alle kürzlich verwendeten löschen?</string>
+    <string name="share_with">Teilen über</string>
+    <plurals name="share_colorcode">
+        <item quantity="one">Mein Farbcode:\u0020</item>
+        <item quantity="other">Meine Farbcodes:\u0020</item>
+    </plurals>
 
 </resources>

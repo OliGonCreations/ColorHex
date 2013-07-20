@@ -5,18 +5,18 @@
             android:icon="@drawable/ic_action_copy"
             />
     <item
-            android:id="@+id/con_action_edit"
-            android:title="@string/action_edit"
-            android:icon="@drawable/ic_action_edit"
-            />
-    <item
             android:id="@+id/con_action_fav"
             android:title="@string/action_favorite_1"
-            android:icon="@drawable/ic_action_favorite"/>
+            android:icon="@drawable/btn_star_off_normal"/>
     <item
             android:id="@+id/con_action_share"
             android:title="@string/action_share"
             android:icon="@drawable/ic_action_share"
+            />
+    <item
+            android:id="@+id/con_action_edit"
+            android:title="@string/action_edit"
+            android:icon="@drawable/ic_action_edit"
             />
 
 

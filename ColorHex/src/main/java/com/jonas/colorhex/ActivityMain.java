@@ -15,6 +15,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ActionMode;
@@ -41,6 +43,7 @@ import com.jonas.colorhex.stickylistview.StickyListHeadersAdapter;
 import com.jonas.colorhex.stickylistview.StickyListHeadersListView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +73,21 @@ public class ActivityMain extends FragmentActivity {
         if (mPager != null) {
             mPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
             mPager.setPageTransformer(true, new ZoomOutPageTransformer());
+            mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int i, float v, int i2) {
+                }
+
+                @Override
+                public void onPageSelected(int i) {
+                    if (CardBackFragment.mActionMode != null)
+                        CardBackFragment.mActionMode.finish();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int i) {
+                }
+            });
         } else {
             getSupportFragmentManager().beginTransaction().add(R.id.leftCard, new CardFrontFragment()).commit();
             getSupportFragmentManager().beginTransaction().add(R.id.rightCard, new CardBackFragment()).commit();
@@ -90,8 +108,6 @@ public class ActivityMain extends FragmentActivity {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (item.getItemId() == R.id.action_favorite) {
             getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new FavoriteFragment()).addToBackStack(null).commit();
-            favIsShown = true;
-            invalidateOptionsMenu();
         } else if (item.getItemId() == android.R.id.home && findViewById(R.id.lvSticky) != null) {
             FragmentManager fm = getSupportFragmentManager();
             if (fm.getBackStackEntryCount() > 0) {
@@ -117,11 +133,12 @@ public class ActivityMain extends FragmentActivity {
     public static class FavoriteFragment extends Fragment implements AdapterView.OnItemClickListener {
 
         private static StickyListHeadersListView mStickyListView;
-        private static View customActionBarView, mDividerView;
+        private static View mDividerView;
         private static Button mFilter;
         private static TextView mEmptyView;
         private CustomListViewAdapter mAdapter;
-        private boolean mIsSorted = false;
+        private boolean mIsSorted;
+        private SharedPreferences sp;
 
         public FavoriteFragment() {
         }
@@ -129,24 +146,16 @@ public class ActivityMain extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            ViewGroup rootView = (ViewGroup) inflater
-                    .inflate(R.layout.fragment_favorite, container, false);
-/*
-            inflater = (LayoutInflater) getActivity().getActionBar().getThemedContext()
-                    .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            customActionBarView = inflater.inflate(R.layout.ab_contextual_view, null);
-            customActionBarView.findViewById(R.id.actionbar_done).setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            editModeSelected(false);
-                        }
-                    });
+            return inflater.inflate(R.layout.fragment_favorite, container, false);
+        }
 
-*/
-            mStickyListView = (StickyListHeadersListView) rootView.findViewById(R.id.lvSticky);
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            sp = getActivity().getSharedPreferences("prefs", 0);
+            mIsSorted = sp.getBoolean("mIsSorted", false);
+            mStickyListView = (StickyListHeadersListView) view.findViewById(R.id.lvSticky);
             mStickyListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-
             mStickyListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
                 private int nr = 0;
@@ -172,6 +181,23 @@ public class ActivityMain extends FragmentActivity {
                             mode.finish();
                             break;
                         case R.id.con_action_share:
+                            Object[] a = mAdapter.getCurrentCheckedPosition().toArray();
+                            Integer[] positions = Arrays.copyOf(a, a.length, Integer[].class);
+                            int size = positions.length;
+                            String message = getResources().getQuantityString(R.plurals.share_colorcode, size, size);
+                            if (size > 1) {
+                                for (int i = 0; i < size - 1; i++) {
+                                    message += mAdapter.getItem(positions[i]) + ",\u0020";
+                                }
+                            }
+                            message += mAdapter.getItem(positions[size - 1]) + ".";
+                            mAdapter.clearSelection();
+                            nr = 0;
+                            mode.finish();
+                            Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+                            sendIntent.setType("text/plain");
+                            startActivity(Intent.createChooser(sendIntent, getString(R.string.share_with)));
                             break;
                     }
                     return false;
@@ -198,17 +224,24 @@ public class ActivityMain extends FragmentActivity {
                 }
 
             });
-            mFilter = (Button) rootView.findViewById(R.id.btn_filter);
-            mDividerView = rootView.findViewById(R.id.view);
-            mEmptyView = (TextView) rootView.findViewById(R.id.tvEmpty);
+            mFilter = (Button) view.findViewById(R.id.btn_filter);
+            mDividerView = view.findViewById(R.id.view);
+            mEmptyView = (TextView) view.findViewById(R.id.tvEmpty);
             mFilter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mIsSorted = !mIsSorted;
                     sortList();
                 }
             });
             sortList();
-            return rootView;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            favIsShown = true;
+            getActivity().invalidateOptionsMenu();
         }
 
         @Override
@@ -216,10 +249,10 @@ public class ActivityMain extends FragmentActivity {
             super.onPause();
             favIsShown = false;
             getActivity().invalidateOptionsMenu();
+            sp.edit().putBoolean("mIsSorted", mIsSorted).commit();
         }
 
         private void sortList() {
-            mIsSorted = !mIsSorted;
             if (mIsSorted)
                 mFilter.setText(getString(R.string.btn_filter_date));
             else
@@ -247,20 +280,6 @@ public class ActivityMain extends FragmentActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             mStickyListView.setItemChecked(i, !mAdapter.isPositionChecked(i));
         }
-/*
-        public void editModeSelected(boolean selected) {
-            final ActionBar actionBar = this.getActivity().getActionBar();
-            if (selected) {
-                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM,
-                        ActionBar.DISPLAY_SHOW_CUSTOM);
-                actionBar.setCustomView(customActionBarView);
-            } else {
-                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE,
-                        ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_HOME
-                                | ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_TITLE);
-
-            }
-        } */
     }
 
     public static class CardFrontFragment extends Fragment implements ColorPicker.OnColorChangedListener, CompoundButton.OnCheckedChangeListener {
@@ -297,6 +316,7 @@ public class ActivityMain extends FragmentActivity {
             tvOutputDec = (TextView) view.findViewById(R.id.tvOutputDec);
             star = (CompoundButton) view.findViewById(R.id.star);
             star.setOnCheckedChangeListener(this);
+            CheatSheet.setup(star, "Add to favorite");
             colorPicker.addSVBar(svBar);
             if (alphaShown) {
                 opacityBar.setVisibility(View.VISIBLE);
@@ -375,15 +395,18 @@ public class ActivityMain extends FragmentActivity {
                 }
             }
         }
+
     }
 
     public static class CardBackFragment extends Fragment implements View.OnClickListener {
 
-        private ImageView color1, color2, color3;
-        public static EditText etColor1, etColor2, etColor3;
-        private Button btClear1, btClear2, btClear3;
-        private ActionMode mActionMode;
-        private int selectedColor = 0;
+        private ImageView color1, color2, color3, color4, color5;
+        public static EditText etColor2, etColor3;
+        public static ExtendedEditText etColor1, etColor4, etColor5;
+        private Button btClear1, btClear2, btClear3, btClear4, btClear5, btAdd, btRemove;
+        public static ActionMode mActionMode;
+        private int selectedColor = 0, mCount = 0;
+        private boolean isJelly = false;
 
         public CardBackFragment() {
         }
@@ -397,106 +420,122 @@ public class ActivityMain extends FragmentActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
+            InputFilter[] filters = new InputFilter[1];
+            filters[0] = new InputFilter() {
+                @Override
+                public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                    if (end > start) {
+
+                        char[] acceptedChars = new char[]{'a', 'b', 'c', 'd', 'e', 'f',
+                                'A', 'B', 'C', 'D', 'E', 'F',
+                                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                                ','};
+
+                        for (int index = start; index < end; index++) {
+                            if (!new String(acceptedChars).contains(String.valueOf(source.charAt(index)))) {
+                                return "";
+                            }
+                        }
+                    }
+                    return null;
+                }
+
+            };
+            isJelly = android.os.Build.VERSION.SDK_INT >= 17;
             color1 = (ImageView) view.findViewById(R.id.color1);
             color2 = (ImageView) view.findViewById(R.id.color2);
             color3 = (ImageView) view.findViewById(R.id.color3);
-            etColor1 = (EditText) view.findViewById(R.id.etColor1);
+            color4 = (ImageView) view.findViewById(R.id.color4);
+            color5 = (ImageView) view.findViewById(R.id.color5);
+            etColor1 = (ExtendedEditText) view.findViewById(R.id.etColor1);
             etColor2 = (EditText) view.findViewById(R.id.etColor2);
             etColor3 = (EditText) view.findViewById(R.id.etColor3);
+            etColor4 = (ExtendedEditText) view.findViewById(R.id.etColor4);
+            etColor5 = (ExtendedEditText) view.findViewById(R.id.etColor5);
+            etColor1.setFilters(filters);
+            etColor4.setFilters(filters);
+            etColor5.setFilters(filters);
             btClear1 = (Button) view.findViewById(R.id.btClear1);
             btClear2 = (Button) view.findViewById(R.id.btClear2);
             btClear3 = (Button) view.findViewById(R.id.btClear3);
-            etColor1.setText(sp.getString("etColor1", "#"));
-            etColor2.setText(sp.getString("etColor2", "#"));
-            etColor3.setText(sp.getString("etColor3", "#"));
+            btClear4 = (Button) view.findViewById(R.id.btClear4);
+            btClear5 = (Button) view.findViewById(R.id.btClear5);
+            if (isJelly) {
+                etColor1.setPrefix("#");
+                etColor4.setPrefix("#");
+                etColor5.setPrefix("#");
+                etColor1.setText(sp.getString(etColor1.getId() + "", ""));
+                etColor4.setText(sp.getString(etColor4.getId() + "", ""));
+                etColor5.setText(sp.getString(etColor5.getId() + "", ""));
+            } else {
+                etColor1.setText(sp.getString("#" + etColor1.getId(), "#"));
+                etColor4.setText(sp.getString(etColor4.getId() + "", "#"));
+                etColor5.setText(sp.getString(etColor5.getId() + "", "#"));
+            }
+            etColor2.setText(sp.getString(etColor2.getId() + "", "#"));
+            etColor3.setText(sp.getString(etColor3.getId() + "", "#"));
             btClear1.setOnClickListener(this);
             btClear2.setOnClickListener(this);
             btClear3.setOnClickListener(this);
+            btClear4.setOnClickListener(this);
+            btClear5.setOnClickListener(this);
             color1.setOnClickListener(this);
             color2.setOnClickListener(this);
             color3.setOnClickListener(this);
-            saveText();
-            etColor1.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    saveText();
-                }
-            });
-            etColor2.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    saveText();
-                }
-            });
-            etColor3.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    saveText();
-                }
-            });
+            color4.setOnClickListener(this);
+            color5.setOnClickListener(this);
+            saveText(etColor1, color1);
+            saveText(etColor2, color2);
+            saveText(etColor3, color3);
+            saveText(etColor4, color4);
+            saveText(etColor5, color5);
+            etColor1.addTextChangedListener(textWatcher(etColor1, color1));
+            etColor2.addTextChangedListener(textWatcher(etColor2, color2));
+            etColor3.addTextChangedListener(textWatcher(etColor3, color3));
+            etColor4.addTextChangedListener(textWatcher(etColor4, color4));
+            etColor5.addTextChangedListener(textWatcher(etColor5, color5));
+            btAdd = (Button) view.findViewById(R.id.btAdd);
+            btRemove = (Button) view.findViewById(R.id.btRemove);
+            btAdd.setOnClickListener(this);
+            btRemove.setOnClickListener(this);
         }
 
-        private void saveText() {
+        TextWatcher textWatcher(final EditText et, final ImageView img) {
+            return new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    saveText(et, img);
+                }
+            };
+        }
+
+        private void saveText(EditText et, ImageView img) {
             try {
-                String s = etColor1.getText().toString();
+                String s = et.getText().toString();
+                int color;
                 if (!s.contains("#"))
                     s = "#" + s;
-                int color = Color.parseColor(s);
-                color1.setBackgroundColor(color);
+                if (s.contains(",")) {
+                    String[] a = s.split(",");
+                    a[0] = a[0].replace("#", "");
+                    s = "#" + Integer.toHexString(Integer.parseInt(a[0]))
+                            + Integer.toHexString(Integer.parseInt(a[1]))
+                            + Integer.toHexString(Integer.parseInt(a[2]));
+                }
+                color = Color.parseColor(s);
+                img.setBackgroundColor(color);
             } catch (Exception e) {
-                color1.setBackgroundColor(Color.WHITE);
+                img.setBackgroundColor(Color.WHITE);
             }
-            try {
-                String s = etColor2.getText().toString();
-                if (!s.contains("#"))
-                    s = "#" + s;
-                int color = Color.parseColor(s);
-                color2.setBackgroundColor(color);
-            } catch (Exception e) {
-                color2.setBackgroundColor(Color.WHITE);
-            }
-            try {
-                String s = etColor3.getText().toString();
-                if (!s.contains("#"))
-                    s = "#" + s;
-                int color = Color.parseColor(s);
-                color3.setBackgroundColor(color);
-            } catch (Exception e) {
-                color3.setBackgroundColor(Color.WHITE);
-            }
-            sp.edit().putString("etColor1", etColor1.getText().toString()).commit();
-            sp.edit().putString("etColor2", etColor2.getText().toString()).commit();
-            sp.edit().putString("etColor3", etColor3.getText().toString()).commit();
+            sp.edit().putString(et.getId() + "", et.getText().toString()).commit();
         }
 
 
@@ -504,20 +543,70 @@ public class ActivityMain extends FragmentActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btClear1:
-                    etColor1.setText("#");
-                    saveText();
+                    if (!isJelly)
+                        etColor1.setText("#");
+                    else
+                        etColor1.setText("");
+                    saveText(etColor1, color1);
                     break;
                 case R.id.btClear2:
                     etColor2.setText("#");
-                    saveText();
+                    saveText(etColor2, color2);
                     break;
                 case R.id.btClear3:
                     etColor3.setText("#");
-                    saveText();
+                    saveText(etColor3, color3);
+                    break;
+                case R.id.btClear4:
+                    if (!isJelly)
+                        etColor4.setText("#");
+                    else
+                        etColor4.setText("");
+                    saveText(etColor4, color4);
+                    break;
+                case R.id.btClear5:
+                    if (!isJelly)
+                        etColor5.setText("#");
+                    else
+                        etColor5.setText("");
+                    saveText(etColor5, color5);
+                    break;
+                case R.id.btAdd:
+                    mCount++;
+                    if (mCount > 0) btRemove.setVisibility(View.VISIBLE);
+                    else btRemove.setVisibility(View.GONE);
+                    if (mCount > 0) {
+                        etColor4.setVisibility(View.VISIBLE);
+                        color4.setVisibility(View.VISIBLE);
+                        btClear4.setVisibility(View.VISIBLE);
+                    }
+                    if (mCount > 1) {
+                        etColor5.setVisibility(View.VISIBLE);
+                        color5.setVisibility(View.VISIBLE);
+                        btClear5.setVisibility(View.VISIBLE);
+                        btAdd.setVisibility(View.GONE);
+                    }
+                    break;
+                case R.id.btRemove:
+                    mCount--;
+                    if (mCount > 0) btRemove.setVisibility(View.VISIBLE);
+                    else btRemove.setVisibility(View.GONE);
+                    if (mCount < 1) {
+                        etColor4.setVisibility(View.GONE);
+                        color4.setVisibility(View.GONE);
+                        btClear4.setVisibility(View.GONE);
+                    } else if (mCount < 2) {
+                        etColor5.setVisibility(View.GONE);
+                        color5.setVisibility(View.GONE);
+                        btClear5.setVisibility(View.GONE);
+                        btAdd.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case R.id.color1:
                 case R.id.color2:
                 case R.id.color3:
+                case R.id.color4:
+                case R.id.color5:
                     if (mActionMode != null) {
                         break;
                     }
@@ -543,6 +632,7 @@ public class ActivityMain extends FragmentActivity {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 String text = "";
+
                 switch (selectedColor) {
                     case R.id.color1:
                         text = etColor1.getText().toString();
@@ -552,6 +642,12 @@ public class ActivityMain extends FragmentActivity {
                         break;
                     case R.id.color3:
                         text = etColor3.getText().toString();
+                        break;
+                    case R.id.color4:
+                        text = etColor4.getText().toString();
+                        break;
+                    case R.id.color5:
+                        text = etColor5.getText().toString();
                         break;
                 }
                 switch (item.getItemId()) {
@@ -566,6 +662,13 @@ public class ActivityMain extends FragmentActivity {
                         if (!text.contains("#"))
                             text = "#" + text;
                         try {
+                            if (text.contains(",")) {
+                                String[] a = text.split(",");
+                                a[0] = a[0].replace("#", "");
+                                text = "#" + Integer.toHexString(Integer.parseInt(a[0]))
+                                        + Integer.toHexString(Integer.parseInt(a[1]))
+                                        + Integer.toHexString(Integer.parseInt(a[2]));
+                            }
                             int color = Color.parseColor(text);
                             float[] mHSV = new float[3];
                             Color.colorToHSV(color, mHSV);
@@ -574,8 +677,8 @@ public class ActivityMain extends FragmentActivity {
                             String hexValue = String.format("#%06X", (0xFFFFFF & color));
                             db.addFavorite(color, mString, hexValue, "A:" + Integer.toHexString(Color.alpha(color)).toUpperCase() + " " + hexValue, "(" + Integer.parseInt("" + hexValue.charAt(1) + hexValue.charAt(2), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt("" + hexValue.charAt(5) + hexValue.charAt(6), 16) + ")", "A:" + Color.alpha(color) + " (" + Integer.parseInt(String.valueOf(hexValue.charAt(1) + hexValue.charAt(2)), 16) + "," + Integer.parseInt("" + hexValue.charAt(3) + hexValue.charAt(4), 16) + "," + Integer.parseInt(String.valueOf(hexValue.charAt(5) + hexValue.charAt(6)), 16) + ")");
                             Toast.makeText(getActivity(), getString(R.string.saved_to_favorite), Toast.LENGTH_SHORT).show();
-
                         } catch (Exception e) {
+                            Log.d("ColorHex", e.toString());
                             Toast.makeText(getActivity(), getString(R.string.error_no_color), Toast.LENGTH_SHORT).show();
                         }
                         selectedColor = 0;
@@ -591,11 +694,17 @@ public class ActivityMain extends FragmentActivity {
                             CardFrontFragment.colorPicker.setNewCenterColor(color);
                             CardFrontFragment.colorPicker.changeValueBarColor(color);
                         } catch (Exception e) {
-                            //Toast.makeText(getActivity(), getString(R.string.error_no_color), Toast.LENGTH_SHORT).show();
                             Log.e("ColorHex", e.toString());
                         }
                         selectedColor = 0;
                         mode.finish();
+                        return true;
+                    case R.id.con_action_share:
+                        String message = "";
+                        Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_with)));
                         return true;
                     default:
                         return false;
@@ -686,11 +795,14 @@ public class ActivityMain extends FragmentActivity {
         }
 
         @Override
-        public Object getItem(int position) {
-            if (position >= colorsFav.size())
-                return colorsRec.get(position - colorsFav.size());
+        public String getItem(int position) {
+            int index;
+            if (codeFav == null) index = 0;
+            else index = codeFav.size();
+            if (position >= index)
+                return codeRec.get(position - index);
             else
-                return colorsFav.get(position);
+                return codeFav.get(position);
         }
 
         @Override

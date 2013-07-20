@@ -1,106 +1,208 @@
-<RelativeLayout
+<ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background"
-        android:layout_margin="8dp"
         android:focusableInTouchMode="true">
 
-    <EditText
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:id="@+id/etColor1"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="64dp"
-            android:fontFamily="sans-serif-light"
-            android:inputType="textCapCharacters|textNoSuggestions"
-            android:layout_toLeftOf="@+id/color1"
-            android:layout_marginRight="16dp"
-            android:imeOptions="actionDone"/>
-    <!--android:nextFocusForward="@+id/etColor2"-->
+            android:layout_height="match_parent">
 
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:id="@+id/etColor2"
-            android:imeOptions="actionDone"
-            android:layout_marginTop="24dp"
-            android:layout_below="@+id/etColor1"
-            android:layout_alignLeft="@+id/etColor1"
-            android:fontFamily="sans-serif-light"
-            android:inputType="textCapCharacters|textNoSuggestions"
-            android:layout_toLeftOf="@+id/color2"
-            android:layout_marginRight="16dp"/>
+        <com.jonas.colorhex.ExtendedEditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/etColor1"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="64dp"
+                android:fontFamily="sans-serif-light"
+                android:inputType="textCapCharacters|textNoSuggestions"
+                android:layout_toLeftOf="@+id/color1"
+                android:layout_marginRight="16dp"
+                android:imeOptions="actionDone"/>
 
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:id="@+id/etColor3"
-            android:layout_marginTop="24dp"
-            android:layout_below="@+id/etColor2"
-            android:layout_alignLeft="@+id/etColor2"
-            android:fontFamily="sans-serif-light"
-            android:inputType="textCapCharacters|textNoSuggestions"
-            android:layout_toLeftOf="@+id/color3"
-            android:layout_marginRight="16dp"
-            android:imeOptions="actionDone"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/etColor2"
+                android:imeOptions="actionDone"
+                android:layout_marginTop="24dp"
+                android:layout_below="@+id/etColor1"
+                android:layout_alignLeft="@+id/etColor1"
+                android:fontFamily="sans-serif-light"
+                android:inputType="textCapCharacters|textNoSuggestions"
+                android:layout_toLeftOf="@+id/color2"
+                android:layout_marginRight="16dp"/>
+
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/etColor3"
+                android:layout_marginTop="24dp"
+                android:layout_below="@+id/etColor2"
+                android:layout_alignLeft="@+id/etColor2"
+                android:fontFamily="sans-serif-light"
+                android:inputType="textCapCharacters|textNoSuggestions"
+                android:layout_toLeftOf="@+id/color3"
+                android:layout_marginRight="16dp"
+                android:imeOptions="actionDone"/>
+
+        <com.jonas.colorhex.ExtendedEditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/etColor4"
+                android:layout_marginTop="24dp"
+                android:layout_below="@+id/etColor3"
+                android:layout_alignLeft="@+id/etColor3"
+                android:fontFamily="sans-serif-light"
+                android:inputType="textCapCharacters|textNoSuggestions"
+                android:layout_toLeftOf="@+id/color4"
+                android:layout_marginRight="16dp"
+                android:imeOptions="actionDone"
+                android:visibility="gone"/>
+
+        <com.jonas.colorhex.ExtendedEditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/etColor5"
+                android:layout_marginTop="24dp"
+                android:layout_below="@+id/etColor4"
+                android:layout_alignLeft="@+id/etColor4"
+                android:fontFamily="sans-serif-light"
+                android:inputType="textCapCharacters|textNoSuggestions"
+                android:layout_toLeftOf="@+id/color5"
+                android:layout_marginRight="16dp"
+                android:imeOptions="actionDone"
+                android:visibility="gone"/>
+
+        <Button
+                android:id="@+id/btClear1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/btn_delete"
+                android:layout_alignBottom="@+id/etColor1"
+                android:layout_alignRight="@+id/etColor1"
+                android:layout_marginRight="8dp"/>
+
+        <Button
+                android:id="@+id/btClear2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/btn_delete"
+                android:layout_alignBottom="@+id/etColor2"
+                android:gravity="center_vertical"
+                android:layout_alignRight="@+id/etColor2"
+                android:layout_marginRight="8dp"/>
+
+        <Button
+                android:id="@+id/btClear3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/btn_delete"
+                android:layout_alignBottom="@+id/etColor3"
+                android:gravity="center_vertical"
+                android:layout_alignRight="@+id/etColor3"
+                android:layout_marginRight="8dp"/>
+
+        <Button
+                android:id="@+id/btClear4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/btn_delete"
+                android:layout_alignBottom="@+id/etColor4"
+                android:gravity="center_vertical"
+                android:layout_alignRight="@+id/etColor4"
+                android:layout_marginRight="8dp"
+                android:visibility="gone"/>
+
+        <Button
+                android:id="@+id/btClear5"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/btn_delete"
+                android:layout_alignBottom="@+id/etColor5"
+                android:gravity="center_vertical"
+                android:layout_alignRight="@+id/etColor5"
+                android:layout_marginRight="8dp"
+                android:visibility="gone"/>
 
 
-    <Button
-            android:id="@+id/btClear1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="9dp"
-            android:background="@drawable/btn_delete"
-            android:layout_alignBottom="@+id/etColor1"
-            android:layout_alignRight="@+id/etColor1"
-            android:layout_marginRight="8dp"/>
+        <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/color1"
+                android:layout_alignTop="@+id/etColor1"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="32dp"/>
 
-    <Button
-            android:id="@+id/btClear2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="9dp"
-            android:background="@drawable/btn_delete"
-            android:layout_alignBottom="@+id/etColor2"
-            android:gravity="center_vertical"
-            android:layout_alignRight="@+id/etColor2"
-            android:layout_marginRight="8dp"/>
+        <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/color2"
+                android:layout_alignTop="@+id/etColor2"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="32dp"/>
 
-    <Button
-            android:id="@+id/btClear3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="9dp"
-            android:background="@drawable/btn_delete"
-            android:layout_alignBottom="@+id/etColor3"
-            android:gravity="center_vertical"
-            android:layout_alignRight="@+id/etColor3"
-            android:layout_marginRight="8dp"/>
+        <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/color3"
+                android:layout_alignTop="@+id/etColor3"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="32dp"/>
+
+        <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/color4"
+                android:layout_alignTop="@+id/etColor4"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="32dp"
+                android:visibility="gone"/>
+
+        <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/color5"
+                android:layout_alignTop="@+id/etColor5"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="32dp"
+                android:visibility="gone"/>
 
 
-    <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@+id/color1"
-            android:layout_alignTop="@+id/etColor1"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="32dp"/>
+        <LinearLayout
+                android:id="@+id/btLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="48dp"
+                android:animateLayoutChanges="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/etColor5">
 
-    <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@+id/color2"
-            android:layout_alignTop="@+id/etColor2"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="32dp"/>
+            <Button
+                    android:id="@+id/btRemove"
+                    android:layout_height="48dp"
+                    android:layout_width="48dp"
+                    android:layout_marginRight="8dp"
+                    android:visibility="gone"
+                    android:background="@drawable/ic_action_subtract"/>
 
-    <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@+id/color3"
-            android:layout_alignTop="@+id/etColor3"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="32dp"/>
-</RelativeLayout>
+            <Button
+                    android:id="@+id/btAdd"
+                    android:layout_height="48dp"
+                    android:layout_width="48dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/ic_action_add"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>
